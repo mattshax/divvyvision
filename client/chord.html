@@ -1,0 +1,265 @@
+<html>
+<meta charset="utf-8">
+<title>Divvy Chord</title>
+<style>
+    @import url(css/chord.css);
+    body {
+        zoom: 0.9;
+        -moz-transform: scale(0.9);
+        -moz-transform-origin: 0 0;
+    }
+    #circle circle {
+        fill: none;
+        pointer-events: all;
+    }
+    .group path {
+        fill-opacity: 1;
+    }
+    path.chord {
+        stroke: #000;
+        stroke-width: 0px;
+        fill-opacity: .8;
+    }
+    #circle:hover path.fade {
+        display: none;
+    }
+    #circle path.fademe {
+        display: none;
+    }
+    #circle path.fadeon {
+        display: "";
+    }
+    #tooltipper {
+        position: absolute;
+        text-align: center;
+        width: 300px;
+        left: 60px;
+        top: 185px;
+        font-size: 32px;
+        font-family: 'divvyfont';
+        opacity: 0.9;
+    }
+</style>
+
+<body>
+
+    <script src="http://d3js.org/d3.v2.min.js?2.8.1"></script>
+    <script>
+        function formatDate(d) {
+            var dd = d.getDate()
+            if (dd < 10) dd = '0' + dd
+            var mm = d.getMonth() + 1
+            if (mm < 10) mm = '0' + mm
+            var yy = d.getFullYear() % 100
+            if (yy < 10) yy = '0' + yy
+            yy = '20' + yy;
+            /*
+              var hr = d.getHours();
+                if ( hr < 10 ) hr = '0' + hr
+              var min = d.getMinutes();
+                if ( min < 10 ) min = '0' + min
+              return yy+'-'+mm+'-'+dd+' '+hr+':'+min
+              */
+            return yy + '-' + mm + '-' + dd
+        }
+
+        var month = new Array();
+        month[0] = "Jan";
+        month[1] = "Feb";
+        month[2] = "Mar";
+        month[3] = "Apr";
+        month[4] = "May";
+        month[5] = "Jun";
+        month[6] = "Jul";
+        month[7] = "Aug";
+        month[8] = "Sept";
+        month[9] = "Oct";
+        month[10] = "Nov";
+        month[11] = "Dec";
+
+
+        function highlightMe(active) {
+
+            var activeID = neighborhoodMap[active];
+
+            var htmltext = active.toUpperCase() + "<br>" + formatPercent(group[0][activeID].__data__.value) + " <span style='font-size:15px'>OF ORIGINS</span>";
+            document.getElementById("tooltipper").innerHTML = htmltext;
+
+            chord.classed("fademe", function(p) {
+                return p.source.index != activeID && p.target.index != activeID;
+            });
+
+        }
+
+        function highlightOff() {
+
+            document.getElementById("tooltipper").innerHTML = "";
+            chord.classed("fademe", function(p) {
+                return false;
+            });
+
+        }
+
+
+        var matrix;
+        var neighborhoods;
+        var neighborhoodMap;
+        var totals;
+
+        var chord;
+        var group;
+        var formatPercent;
+
+        function feedMe(data) {
+
+            d3.select("svg")
+                .remove();
+
+
+            var width = 420,
+                height = 420,
+                outerRadius = Math.min(width, height) / 2 - 10,
+                innerRadius = outerRadius - 24;
+
+            formatPercent = d3.format(".1%");
+
+            var arc = d3.svg.arc()
+                .innerRadius(innerRadius)
+                .outerRadius(outerRadius);
+
+            var layout = d3.layout.chord()
+                .padding(.04)
+                .sortSubgroups(d3.descending)
+                .sortChords(d3.ascending);
+
+            var path = d3.svg.chord()
+                .radius(innerRadius);
+
+            var svg = d3.select("#chord").append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                .append("g")
+                .attr("id", "circle")
+                .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+            svg.append("circle")
+                .attr("r", outerRadius);
+
+            matrix = data.matrix;
+            neighborhoods = data.neighborhoods;
+            neighborhoodMap = data.neighborhoodMap;
+            totals = data.totals;
+
+
+            var monthme = month[parseInt(data.date.split("-")[1]) - 1];
+            var dayme = data.date.split("-")[2];
+            var yearme = data.date.split("-")[0];
+            var date = monthme + " " + dayme + ", " + yearme;
+            document.getElementsByName("header")[0].innerHTML = '<span style="font-size:17px;font-family:\'divvyfont\'">Divvy Rides by Neighborhood on &nbsp;</span> ' + date;
+
+            // Compute the chord layout.
+            layout.matrix(matrix);
+
+            // Add a group per neighborhood.
+            group = svg.selectAll(".group")
+                .data(layout.groups)
+                .enter().append("g")
+                .attr("class", "group")
+                .on("mouseover", mouseover).on("mouseout", mouseout);
+
+
+            // Add a mouseover title.
+            group.append("title").text(function(d, i) {
+                return neighborhoods[i].name + ": " + formatPercent(d.value) + " of origins";
+            });
+
+            // Add the group arc.
+            var groupPath = group.append("path")
+                .attr("id", function(d, i) {
+                    return "group" + i;
+                })
+                .attr("d", arc)
+                //.style("fill", function(d, i) { return cities[i].color; });
+                .style("fill", function(d, i) {
+                    return "rgba(0,255,255,0.7)"
+                });
+
+            // Add a text label.
+            var groupText = group.append("text")
+                .attr("x", 3)
+                .attr("dy", 15)
+                .style("fill", "#fff")
+
+            groupText.append("textPath")
+                .attr("xlink:href", function(d, i) {
+                    return "#group" + i;
+                })
+                .text(function(d, i) {
+                    return neighborhoods[i].name.toUpperCase();
+                });
+
+            // Remove the labels that don't fit. :(
+            groupText.filter(function(d, i) {
+                    return groupPath[0][i].getTotalLength() / 2 - 24 < this.getComputedTextLength();
+                })
+                .remove();
+
+            // Add the chords.
+            chord = svg.selectAll(".chord")
+                .data(layout.chords)
+                .enter().append("path")
+                .attr("class", "chord")
+                //.style("fill", function(d) { return cities[d.source.index].color; })
+                .style("fill", function(d) {
+                    return "rgba(0,255,255,0.7)"
+                })
+                .attr("d", path);
+
+            // Add an elaborate mouseover title for each chord.
+            chord.append("title").text(function(d) {
+                return neighborhoods[d.source.index].name + " → " + neighborhoods[d.target.index].name + ": " + formatPercent(d.source.value) + "\n" + neighborhoods[d.target.index].name + " → " + neighborhoods[d.source.index].name + ": " + formatPercent(d.target.value);
+            });
+
+            function mouseover(d, i) {
+                var htmltext = neighborhoods[i].name.toUpperCase() + "<br>" + formatPercent(d.value) + " <span style='font-size:15px'>OF ORIGINS</span>";
+                document.getElementById("tooltipper").innerHTML = htmltext;
+                try {
+                    var message = {
+                        msg: 'hoveractive',
+                        neighborhood: neighborhoods[i].name
+                    }
+                    parent.parent.postMessage(message, "*");
+                }
+                catch (e) {
+                    console.log(e)
+                };
+                chord.classed("fade", function(p) {
+                    return p.source.index != i && p.target.index != i;
+                });
+            }
+
+            function mouseout(d, i) {
+                document.getElementById("tooltipper").innerHTML = "";
+
+                chord.classed("fademe", function(p) {
+                    return false;
+                });
+
+                var message = {
+                    msg: 'hoveroff',
+                }
+
+                parent.parent.postMessage(message, "*");
+
+            }
+
+        }
+    </script>
+
+    <div id='tooltipper'></div>
+    <h1 name='header' style="margin-left:54px"></h1>
+    <div id="chord">
+    </div>
+    <p style="text-align:center">Mouseover to focus on rides to or from a single neighbor&shy;hood.
+        <p style="text-align:center">The thickness of links be&shy;tween neighborhoods encodes the relative frequency of rides between two neighborhoods: thicker links represent more frequent rides.
+</body>

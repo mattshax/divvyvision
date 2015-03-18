@@ -1,0 +1,32 @@
+#info {
+    display: block;
+    position: absolute;
+    background: rgba(42, 42, 42, 0.8);
+    top: 0px;
+    left: 50%;
+    height: auto;
+    min-width: 40px;
+    width: auto;
+    font-family: sans-serif;
+    font-size: medium;
+    color: #eee;
+    border-radius: 5px;
+    text-align: center;
+    padding-left: 1em;
+    padding-right: 1em;
+    -webkit-transform: translate(-50%, 0);
+    transform: translate(-50%, 0);
+    
+    opacity: 1;
+    transition: opacity .75s ease-in-out;
+    -moz-transition: opacity .75s ease-in-out;
+    -webkit-transition: opacity .75s ease-in-out;
+}
+  
+#info.collapsed {
+    opacity: 0;
+}
+
+#info.uncollapsed {
+   opacity: 1;
+}

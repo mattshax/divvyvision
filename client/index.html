@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Divvy Vision</title>
+    <!--<script src="//divvy.vision:35729/livereload.js"></script>-->
+    <script src="library/cesium/Cesium.js"></script>
+    <script src="scripts/util.js"></script>
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="http://libs.cartocdn.com/cartodb.js/v3/3.11/cartodb.core.js"></script>
+    <script src="library/cesium/cesium-cartodb.js"></script>
+    <script src="library/knockout-3.1.0.js"></script>
+    <script src="library/chroma.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.3.1/lodash.min.js"></script>
+    <style>
+        @import url(library/cesium/Widgets/widgets.css);
+        @import url(css/filmstrip.css);
+        @import url(css/info.css);
+        @import url(css/thumbnail.css); 
+        #cesiumContainer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            overflow: hidden;
+            padding: 0;
+            font-family: sans-serif;
+        }
+        #cameraInfo {
+            visibility: hidden;
+            display: block;
+            position: absolute;
+            background: rgba(42, 42, 42, 0.8);
+            top: 50%;
+            left: 0px;
+            height: 100px;
+            width: 650px;
+            font-family: sans-serif;
+            font-size: x-small;
+            color: #eee;
+            padding: 15px;
+        }
+        ::-webkit-scrollbar {
+            width: 10px;
+            /* for vertical scrollbars */
+            
+            height: 10px;
+            /* for horizontal scrollbars */
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(100, 100, 100, 0.1);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(100, 100, 100, 0.75);
+            border-radius: 10px;
+        }
+        #debugControl {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: .5em;
+            background: rgba(42, 42, 42, 0.7);
+            width: auto;
+            height: auto;
+            white-space: nowrap;
+            -moz-border-radius: 3px;
+            -webkit-border-radius: 3px;
+            border-radius: 3px;
+            color: #fff;
+            font-size: small;
+            font-family: sans-serif;
+            text-decoration: none;
+        }
+        body {
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+        .cesium-widget-credits {
+            padding-right: 0;
+            margin-right: 35px;
+            z-index: 999;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        .cesium-viewer-fullscreenContainer {
+            top: 5px;
+            right: 9px;
+            height: 32px;
+            width: 32px;
+        }
+        /*
+        .cesium-viewer-toolbar {
+            display: block;
+            position: absolute;
+            top: 3px !important;
+            right: 44px !important;
+        }
+        */
+        .cesium-button.cesium-fullscreenButton {
+            border-radius: 14%;
+        }
+        #noselectzone {
+            bottom: 0px;
+            position: absolute;
+            height: 175px;
+            background-color: #000;
+            opacity: 0;
+            width: 100%;
+        }
+        #infobox {
+            width: 395px;
+            height: 497px;
+            display: block;
+            position: absolute;
+            top: 50px;
+            right: 0;
+            max-width: 450px;
+            background: rgba(38, 38, 38, 0.95);
+            color: #edffff;
+            border: 1px solid #444;
+            border-right: none;
+            border-top-left-radius: 7px;
+            border-bottom-left-radius: 7px;
+            box-shadow: 0 0 10px 1px #000;
+            -webkit-transform: translate(100%, 0);
+            z-index: 100000;
+            -moz-transform: translate(100%, 0);
+            transform: translate(100%, 0);
+            visibility: visible;
+            -webkit-transition: visibility 0s 0.2s, opacity 0.2s ease-in, -webkit-transform 0.2s ease-in;
+            -moz-transition: visibility 0s 0.2s, opacity 0.2s ease-in, -moz-transform 0.2s ease-in;
+            transition: visibility 0s 0.2s, opacity 0.2s ease-in, transform 0.2s ease-in;
+            transform: translate(0, 0);
+            opacity: 0.75;
+            -webkit-transition: opacity 0.2s ease-out, -webkit-transform 0.2s ease-out;
+            -moz-transition: opacity 0.2s ease-out, -moz-transform 0.2s ease-out;
+            transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+        }
+        #HelpContainerBG {
+            width: 100%;
+            height: 100%;
+            z-index: 10000000;
+            background: rgba(0, 0, 0, 0.75);
+            background-image: url(img/pattern_horizontal.png);
+            background-repeat: repeat;
+            position: absolute;
+        }
+        #HelpContainer {
+             zoom: 0.9;
+            -moz-transform: scale(0.9);
+            -moz-transform-origin: 0 0;
+            width: 930px;
+            height: 505px;
+            display: block;
+            position: absolute;
+            top: 100px;
+            left: 100px;
+            z-index: 100000000000;
+            background: rgba(38, 38, 38, 0.95);
+            color: #edffff;
+            border: 1px solid #444;
+            border-right: none;
+            border-top-left-radius: 7px;
+            border-bottom-left-radius: 7px;
+            border-top-right-radius: 7px;
+            border-bottom-right-radius: 7px;
+            box-shadow: 0 0 10px 1px #000;
+            -webkit-transform: translate(100%, 0);
+            -moz-transform: translate(100%, 0);
+            transform: translate(100%, 0);
+            visibility: visible;
+            -webkit-transition: visibility 0s 0.2s, opacity 0.2s ease-in, -webkit-transform 0.2s ease-in;
+            -moz-transition: visibility 0s 0.2s, opacity 0.2s ease-in, -moz-transform 0.2s ease-in;
+            transition: visibility 0s 0.2s, opacity 0.2s ease-in, transform 0.2s ease-in;
+            transform: translate(0, 0);
+            opacity: 0.75;
+            -webkit-transition: opacity 0.2s ease-out, -webkit-transform 0.2s ease-out;
+            -moz-transition: opacity 0.2s ease-out, -moz-transform 0.2s ease-out;
+            transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+        }
+        #helpcontent {
+            text-align: center;
+            font-size: 15px;
+            font-family: 'divvyfont';
+            opacity: 1;
+            margin-left: 30px;
+            margin-right: 30px;
+        }
+        a {
+            color: #ffffff;
+        }
+        .cesium-navigation-help {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <object type="image/svg+xml" style="opacity: 0.8;margin-left: 78px;margin-top: 13px;width:100px;height:50px;position:absolute;z-index:1000000000000;" data="img/divvyIcon.svg"></object>
+    <object type="image/svg+xml" style="opacity: 0.8;margin-left: -9px;margin-top: 13px;width:100px;height:50px;position:absolute;z-index:1000000000000;" data="img/chicagoIcon.svg"></object>
+    <div id="cesiumContainer"></div>
+    <div id="header"></div>
+    <div id="HelpContainerBG" style=""></div>
+    <div id="HelpContainer" style="">
+        <div id="helpcontent">
+            <p class="helpc" style="font-size:24px;">Welcome to Divvy.Vision</p>
+            <p class="helpc">Divvy.Vision is an open-source viewer of 2014 origin and destination trips of Chicago's Divvy bike share program,
+                <br> and an entry for the <a class="helpc" target="_blank" href="https://www.divvybikes.com/datachallenge"> Divvy Data Challenge 2015</a>. </p>
+            <p class="helpc">Click outside this infobox to explore. Major features of the visualization are outlined in <a class="helpc" target="_blank" href="https://vimeo.com/mattshax/divvyvision">this video demo</a> and below:</p>
+            <table style="width:100%">
+                <tr>
+                    <td><img src="img/1info.png" style="border-top-left-radius: 7px;border-bottom-left-radius: 7px;border-top-right-radius: 7px;border-bottom-right-radius: 7px;width:260px;height:200px"> </td>
+                    <td><img src="img/2info.png" style="border-top-left-radius: 7px;border-bottom-left-radius: 7px;border-top-right-radius: 7px;border-bottom-right-radius: 7px;width:260px;height:200px">
+                    </td>
+                    <td><img src="img/3info.png" style="border-top-left-radius: 7px;border-bottom-left-radius: 7px;border-top-right-radius: 7px;border-bottom-right-radius: 7px;width:260px;height:200px">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:33%;padding-left: 12px;padding-right: 12px;font-size:12px">Find 2014 daily & hourly origin-destination trip data with the sliders. Taller curves = longer trips.</td>
+                    <td style="width:33%;padding-left: 12px;padding-right: 12px;font-size:12px">View daily frequency of trips between two neighborhoods with the chord diagram to the right.</td>
+                    <td style="width:33%;padding-left: 12px;padding-right: 12px;font-size:12px">Highlight neighborhoods to see flow from a selected neighborhood. Brightness = more trips.</td>
+                </tr>
+            </table>
+            <p class="helpc">This visualization uses a <a class="helpc" target="_blank" href="https://www.docker.com/">dockerized</a> <a class="helpc" target="_blank" href="http://cassandra.apache.org/">Cassandra</a> database for storage and querying,<a class="helpc"
+                target="_blank" href="http://cesiumjs.org/">Cesium</a> for 3D GIS mapping, <a class="helpc" target="_blank" href="http://cartodb.com/basemaps/">CartoDB Positron</a> for basemap tiling, <a class="helpc" target="_blank" href="http://d3js.org/">d3</a> for chord diagrams, <a class="helpc" target="_blank" href="http://www.jstween.org/">jsTween</a> for sliders, <a class="helpc" target="_blank" href="https://nodejs.org/">Nodejs</a> for serving of content, and <a class="helpc" target="_blank"
+                href="http://turfjs.org/">Turf</a> for server-side GIS operations.</p>
+            <p class="helpc">Try out the visualization yourself or learn more about Divvy.Vision at the <a class="helpc" target="_blank" href="https://github.com/mattshax/divvyvision"> github repository here.</a>
+            </p>
+        </div>
+    </div>
+    <div id="infobox" onmouseout="selectzone()" onmouseover="noselectzone()"></div>
+    <div id="hrslider" style="z-index:1000000" onmouseout="selectzone()" onmouseover="noselectzone()"></div>
+    <div id="slider" style="z-index:1000000" onmouseout="selectzone()" onmouseover="noselectzone()"></div>
+    <div id="noselectzone" onmouseout="selectzone()" onmouseover="noselectzone()"></div>
+    <div id="cameraInfo">
+        <p><strong>CameraInfo:</strong>
+        </p>
+        <pre data-bind="text: cameraInfo"></pre>
+    </div>
+    <div id="filmstrip" class="uncollapsed" style="display:''" onmouseout="selectzone()" onmouseover="noselectzone()">
+        <div id="filmstripheader" style="opacity:0.7;font-family:'divvyfont';float:right;right: 70px;position:absolute;margin-top: -20px;">SAVED VIEWS</div>
+        <div id="thumbnails" data-bind="foreach: pointsOfInterest">
+            <div class="tip2 thumbnail" data-bind="click: $parent.changePointOfInterest, style: { backgroundImage: 'url(\'' + $data.thumbnail + '\')' }">
+                <span data-bind="text: name"></span>
+            </div>
+        </div>
+        <div id="collapse" class="uncollapsed" onclick="onCollapse()"></div>
+    </div>
+    <div id="info" class="collapsed"><p data-bind="html: info" onclick="onClickInfo()"></p></div>
+    <script src="scripts/poi.js"></script>
+    <script src="scripts/app.js"></script>
+    <script src="scripts/annualslider.js"></script>
+    <script src="scripts/hourlyslider.js"></script>
+    <script src="scripts/button.js"></script>
+    <script src="scripts/subnav.js"></script>
+    <script src="scripts/toggle.js"></script>
+    <script src="scripts/divvyvisuals.js"></script>
+</body>
+</html>

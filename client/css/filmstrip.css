@@ -1,0 +1,70 @@
+#filmstrip {
+    display: block;
+    position: absolute;
+     background: rgba(38, 38, 38, 0.75);
+    bottom: 0px;
+    left: 0px;
+    box-sizing: border-box;
+    height: 136px;
+    width: 100%;
+    font-family: sans-serif;
+    font-size: x-small;
+    color: #eee;
+    padding: 23px 0 20px;
+    overflow:hidden;
+    z-index:1000000;
+    border-top: 1px solid rgba(255, 255, 255, 0.36);
+    -webkit-transform: translate(0px,0px);
+    -webkit-transform-origin: 0 0;
+    -webkit-transition-property: -webkit-transform;
+    -webkit-transition-duration: 0.5s;
+    -moz-transform: translate(0px,0px);
+    -moz-transform-origin: 0 0;
+    -moz-transition-property: -moz-transform;
+    -moz-transition-duration: 0.5s;
+    transform: translate(0px,0px);
+    transform-origin: 0 0;
+    transition-property: transform;
+    transition-duration: 0.5s;
+}
+  
+#filmstrip.collapsed {
+    -webkit-transform: translate(0px,115px);
+    -moz-transform: translate(0px,115px);
+    transform: translate(0px,115px);
+}
+  
+#filmstrip.uncollapsed {
+    -webkit-transform: translate(0px,0px);
+    -moz-transform: translate(0px,0px);
+    transform: translate(0px,0px);
+     height: 126px;
+}
+
+#collapse {
+    position: absolute;
+    top: 0px;
+    right: 30px;
+    width: 0px;
+    height: 0px;
+    border-style: solid;
+    border-width: 15px;
+    cursor: pointer;
+}
+
+#collapse.uncollapsed {
+    border-color: #777 transparent transparent transparent;
+}
+#collapse.uncollapsed:hover {
+    border-color: #eee transparent transparent transparent;
+}
+
+#collapse.collapsed {
+    border-color: transparent transparent #777 transparent;
+    -ms-transform: translate(0px,-15px); /* IE 9 */
+    -webkit-transform: translate(0px,-15px); /* Chrome, Safari, Opera */
+    transform: translate(0px,-15px);
+}
+#collapse.collapsed:hover {
+    border-color: transparent transparent #eee transparent;
+}

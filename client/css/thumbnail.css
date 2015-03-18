@@ -1,0 +1,61 @@
+.thumbnail {
+    display: inline-block;
+    position: relative;
+    background: rgba(255, 255, 255, 0.8);
+    border-width: 2px;
+    border-style: solid;
+    border-color: rgba(255,255,255,.8);
+    height: 72px;
+    width: 128px;
+    font-family: sans-serif;
+    font-size: x-small;
+    color: #eee;
+    margin: 5px;
+    text-align: center;
+    vertical-align: top;
+    cursor: pointer;
+}
+.thumbnail:hover {
+    box-shadow: 0 0 10px #fff;
+}
+#thumbnails {
+    overflow: auto;
+    overflow-y: visible;
+    white-space: nowrap;
+    padding: 0 10px;
+    scrollbar-track-color: rgba(100, 100, 100, 0.1);
+    scrollbar-face-color: rgba(100, 100, 100, 0.75);
+    scrollbar-arrow-color: rgba(100, 100, 100, 0.75);
+}
+
+
+/*
+tooltip css
+source: http://konigi.com/tools/css-tooltips-and-speech-bubbles
+*/
+div.tip2 {
+    position: relative;
+    text-decoration: none;
+}
+div.tip2 span {
+    display: none;
+    z-index: 10;
+}
+div.tip2:hover span {
+    display: inline-block;
+    position: relative; 
+    padding: .5em;
+    content: attr(title);
+    min-width: 80px;
+    text-align: center;
+    width: auto;
+    height: auto;
+    white-space: nowrap;
+    top: 3px;
+    background: rgba(80,80,80,.8);
+    -moz-border-radius:3px;
+    -webkit-border-radius:3px;
+    border-radius:3px;    
+    color: #fff;
+    font-size: .86em;
+}
