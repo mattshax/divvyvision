@@ -6,7 +6,7 @@ It aims to better understand rider mobility by visualizing trips between station
 
 Here's a [demo of Divvy.Vision](http://vimeo.com/mattshax/divvyvision). Feel free to try out the visualization yourself at http://divvy.vision, or recreate the visualization using the instructions below.
 
-![http://divvy.vision](http://dev.divvy.vision/img/OVERVIEW_sm.png)
+![http://divvy.vision](http://chicago.vision/img/OVERVIEW_sm.png)
 
 
 * * *
