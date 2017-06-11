@@ -13,7 +13,7 @@
     "cassandra-driver": "^2.0.0",
     "compression": "1.0.8",
     "express": "~4.9.x",
-    "request": "2.36.0",
+    "request": "2.74.0",
     "turf": "^2.0.0",
     "yargs": "1.2.6"
   },
