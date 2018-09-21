@@ -6,7 +6,7 @@ It aims to better understand rider mobility by visualizing trips between station
 
 Here's a [demo of Divvy.Vision](http://vimeo.com/mattshax/divvyvision). Feel free to try out the visualization yourself by recreating the visualization using the instructions below.
 
-![Divvy Vision](https://www.dropbox.com/s/60k8g9ndnzm6fif/OVERVIEW_sm.png?dl=1)
+![Divvy Vision](https://www.dropbox.com/s/60k8g9ndnzm6fif/OVERVIEW_sm.png?raw=1)
 
 
 * * *
