@@ -1,12 +1,12 @@
 # Divvy.Vision
 
-**[Divvy.Vision](http://chicago.vision) is an open-source visualization platform of Chicago's Divvy bike share program, and an entry for the Divvy Data Challenge 2015.**
+**Divvy.Vision is an open-source visualization platform of Chicago's Divvy bike share program, and an entry for the Divvy Data Challenge 2015.**
 
 It aims to better understand rider mobility by visualizing trips between stations with hourly height curves representing trip length, and daily flow from a selected neighborhood with a map-coupled chord diagram.
 
-Here's a [demo of Divvy.Vision](http://vimeo.com/mattshax/divvyvision). Feel free to try out the visualization yourself at http://chicago.vision, or recreate the visualization using the instructions below.
+Here's a [demo of Divvy.Vision](http://vimeo.com/mattshax/divvyvision). Feel free to try out the visualization yourself by recreating the visualization using the instructions below.
 
-![http://chicago.vision](http://chicago.vision/img/OVERVIEW_sm.png)
+![Divvy Vision](https://www.dropbox.com/s/60k8g9ndnzm6fif/OVERVIEW_sm.png?dl=1)
 
 
 * * *
